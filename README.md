@@ -9,7 +9,7 @@ This is a task manager that used to keep oneself organized for the day. It can d
 
 For persistence , have built a simple DB which uses a file for storage.  This DB mimics a database but is primitive , trivial in nature.
 
-###How does it work : 
+### How does it work : 
 
   The app is composed of model.py , controller.py , view.py and DB.py. It follows the MVC pattern.  All the data from a file called db.json is read in a certain format into a list in memory. The list is modified and again written back into a file. The operations such as Search , Delete and Update happens on the elements in the list 
   
