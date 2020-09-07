@@ -2,3 +2,4 @@ TodoApp.txt
 venv
 .__pycache
 .idea
+.pyc
