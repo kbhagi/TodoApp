@@ -51,10 +51,8 @@ class DB:
         file_status = file_path.is_file()
         return path_status, file_status
 
-
     def create_directory(self, path):
         os.makedirs(path)
-
 
     def touch_file(self, absolute_path):
         with open(absolute_path, 'a'):
@@ -66,7 +64,6 @@ class DB:
             read_task_data = list(filter(None, contents))
             return read_task_data
 
-
     def search_task(self, task):
         existing_tasks = self.read_file()
         print("tasks read")
@@ -75,6 +72,8 @@ class DB:
             if task_data:
                items = task_data.split(",")
                if items:
+                  print("items")
+                  print(items)
                   taskobject = Task(items[0], items[1], items[2], items[3])
                if taskobject.name == task.name:
                   print("Task found at :", index)
@@ -85,22 +84,45 @@ class DB:
         # contents = task.__dict__
         print("update task contents")
         # read_task_data = self.read_file()
-        result = self.search_task(task)
-        if result:
-            read_task_data, index, task_object = result
-            if index and task_object:
+        search_result = self.search_task(task)
+        print("result of search task", search_result)
+        if search_result:
+            read_task_data, index, task_object = search_result
+            if index or task_object or read_task_data:
+                print("index ", index)
                 existing_task = read_task_data[index]
+                print("existing task ")
+                print(existing_task)
                 new_task = existing_task.split(",")
+                print("new task ")
+                print(new_task)
                 if existing_task:
-                    new_task[0] = task.name
-                    new_task[1] = task.description
-                    new_task[2] = task.log_date
-                    new_task[3] = task.status
+                    print("existing_task")
+                    if task.name == "default":
+                        new_task[0] = new_task[0]
+                    else:
+                        new_task[0] = task.name
+
+                    if task.description == "default":
+                        new_task[1] = new_task[1]
+                    else:
+                        new_task[1] = task.description
+
+                    if task.log_date == "default":
+                        new_task[2] = new_task[2]
+                    else:
+                        new_task[2] = task.log_date
+
+                    if task.status == "default":
+                        new_task[3] = new_task[3]
+                    else:
+                        new_task[3] = task.status
                     read_task_data.remove(existing_task)
                     print("read_task_data after removing existing task")
                     print(read_task_data)
                     read_task_data.insert(index, ','.join(new_task))
                     self.save_task(read_task_data)
+                    return "Task " + task_object.__str__(), " updated"
         else:
             return "Tasks db is empty"
 
@@ -111,7 +133,7 @@ class DB:
 
         if result:
             existing_tasks, index, taskobject = result
-            print(existing_tasks, index , taskobject)
+            print(existing_tasks, index, taskobject)
             if existing_tasks:
                 task_to_delete = existing_tasks[index]
                 print("index of task to be deleted", task_to_delete)
@@ -141,7 +163,15 @@ class DB:
             for task in tasks:
                 writefile.write(task+':')
             # writefile.write(str(tasks))
-    #
+
+    def display_tasks(self):
+        tasks = []
+        tasks_read = self.read_file()
+        for i, task in enumerate(tasks_read):
+            tasks.append(str(i)+" "+task)
+        return tasks
+
+
     def initialize(self, path_name, absolute_path):
         path_status, file_status = self.check_file_exists(path_name, absolute_path)
         if path_status and file_status:
